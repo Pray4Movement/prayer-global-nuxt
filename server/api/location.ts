@@ -4786,7 +4786,7 @@ export default defineEventHandler(async event => {
     SELECT * 
     FROM relays
     WHERE relay_id = '49ba4c' 
-    AND timestamp < DATETIME(CURRENT_TIMESTAMP, '-1 minutes') 
+    AND timestamp < DATETIME(CURRENT_TIMESTAMP, '-10 seconds') 
     ORDER BY total, random()
     LIMIT 1
   `).all();
