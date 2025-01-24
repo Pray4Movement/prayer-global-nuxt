@@ -4782,16 +4782,15 @@ export default defineEventHandler(async event => {
   // await db.sql`INSERT INTO relays (relay_id, grid_id, total) VALUES ('123', ${id}, '1')`;
 
   // Query for users
-  let {rows  } = await db.prepare(`
+  let rows = await db.prepare(`
     SELECT * 
     FROM relays
     WHERE relay_id = '49ba4c' 
     AND timestamp < DATETIME(CURRENT_TIMESTAMP, '-1 minutes') 
     ORDER BY total, random()
-    LIMIT 1 
+    LIMIT 1
   `).all();
   rows = rows || [];
-  // console.log(rows);
 
   let location = null;
   if ( rows.length === 0 ){
