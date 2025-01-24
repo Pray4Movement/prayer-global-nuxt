@@ -17,10 +17,10 @@ export default defineNitroPlugin(async (nitroApp) => {
   console.log(rows);
   if ( rows && rows[0]?.count === 0 ) {
     //add indexes to the table
-    db.exec(`CREATE INDEX one ON relays (relay_id, timestamp);`)
-    db.exec(`CREATE INDEX two ON relays (relay_id, grid_id);`)
-    db.exec(`CREATE INDEX three ON relays (relay_id, total);`)
-    db.exec(`CREATE INDEX four ON relays (relay_id);`)
+    await db.exec(`CREATE INDEX one ON relays (relay_id, timestamp);`)
+    await db.exec(`CREATE INDEX two ON relays (relay_id, grid_id);`)
+    await db.exec(`CREATE INDEX three ON relays (relay_id, total);`)
+    await db.exec(`CREATE INDEX four ON relays (relay_id);`)
     let locations = [
       '100001073',
       '100024783',
