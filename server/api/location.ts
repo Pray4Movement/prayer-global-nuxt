@@ -4779,7 +4779,7 @@ export default defineEventHandler(async event => {
   // await db.sql`INSERT INTO relays (relay_id, grid_id, total) VALUES ('123', ${id}, '1')`;
 
   // Query for users
-  let {rows  } = await db.sql`SELECT * FROM relays WHERE timestamp < DATETIME(CURRENT_TIMESTAMP, '-1 minutes')`;
+  let {rows  } = await db.sql`SELECT * FROM relays WHERE relay_id = '49ba4c' AND timestamp < DATETIME(CURRENT_TIMESTAMP, '-1 minutes') AND total = (SELECT MIN(total) FROM relays WHERE relay_id = '49ba4c')`;
   rows = rows || [];
 
   let location = null;
