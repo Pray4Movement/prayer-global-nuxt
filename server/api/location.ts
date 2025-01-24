@@ -4784,13 +4784,8 @@ export default defineEventHandler(async event => {
     FROM relays
     WHERE relay_id = '49ba4c' 
     AND timestamp < DATETIME(CURRENT_TIMESTAMP, '-1 minutes') 
-    AND total = (
-      SELECT MIN(total)
-      FROM relays
-      WHERE relay_id = '49ba4c'
-    )
-   ORDER BY random()
-   LIMIT 1 
+    ORDER BY total, random()
+    LIMIT 1 
   `;
   rows = rows || [];
   // console.log(rows);
