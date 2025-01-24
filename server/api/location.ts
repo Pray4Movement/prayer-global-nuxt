@@ -4779,8 +4779,21 @@ export default defineEventHandler(async event => {
   // await db.sql`INSERT INTO relays (relay_id, grid_id, total) VALUES ('123', ${id}, '1')`;
 
   // Query for users
-  let {rows  } = await db.sql`SELECT * FROM relays WHERE relay_id = '49ba4c' AND timestamp < DATETIME(CURRENT_TIMESTAMP, '-1 minutes') AND total = (SELECT MIN(total) FROM relays WHERE relay_id = '49ba4c')`;
+  let {rows  } = await db.sql`
+    SELECT * 
+    FROM relays
+    WHERE relay_id = '49ba4c' 
+    AND timestamp < DATETIME(CURRENT_TIMESTAMP, '-1 minutes') 
+    AND total = (
+      SELECT MIN(total)
+      FROM relays
+      WHERE relay_id = '49ba4c'
+    )
+   ORDER BY random()
+   LIMIT 1 
+  `;
   rows = rows || [];
+  // console.log(rows);
 
   let location = null;
   if ( rows.length === 0 ){
@@ -4789,9 +4802,7 @@ export default defineEventHandler(async event => {
     await db.sql`UPDATE relays SET timestamp = CURRENT_TIMESTAMP WHERE relay_id = '49ba4c' AND grid_id = ${location}`;
     await db.sql`UPDATE relays SET total = total + 1 WHERE relay_id = '49ba4c' AND grid_id = ${location}`;
   } else {
-    const lowest_total = Math.min(...rows.map(row => row.total));
-    const rows_with_lowest = rows.filter(row => row.total === lowest_total);
-    let row = rows_with_lowest[Math.floor(Math.random() * rows_with_lowest.length)];
+    const row =rows[0];
     location = row.grid_id
 
     //update timestamp
