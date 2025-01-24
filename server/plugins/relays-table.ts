@@ -11,10 +11,16 @@ export default defineNitroPlugin(async (nitroApp) => {
     "timestamp" TEXT DEFAULT CURRENT_TIMESTAMP
     )`;
 
+
   console.log(created);
   const {rows} = await db.sql`SELECT COUNT(*) as count FROM relays`;
   console.log(rows);
-  if ( rows && rows[0]?.count === 0 ){
+  if ( rows && rows[0]?.count === 0 ) {
+    //add indexes to the table
+    db.exec(`CREATE INDEX one ON relays (relay_id, timestamp);`)
+    db.exec(`CREATE INDEX two ON relays (relay_id, grid_id);`)
+    db.exec(`CREATE INDEX three ON relays (relay_id, total);`)
+    db.exec(`CREATE INDEX four ON relays (relay_id);`)
     let locations = [
       '100001073',
       '100024783',
@@ -4789,8 +4795,8 @@ export default defineNitroPlugin(async (nitroApp) => {
 
     //insert each location into the table
     let sql = `INSERT INTO relays (relay_id, grid_id, total) VALUES`
-    locations.forEach(location=>{
-        sql += `('49ba4c', ${location}, 0),`
+    locations.forEach(location => {
+      sql += `('49ba4c', ${location}, 0),`
     })
     sql = sql.slice(0, -1)
     console.log(sql);
