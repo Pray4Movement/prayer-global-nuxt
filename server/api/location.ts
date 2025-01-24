@@ -4770,23 +4770,26 @@ const locations = [
   '100260018',
 ];
 
+import Database from 'better-sqlite3';
+const db = new Database('.data/db.sqlite3', {});
+db.pragma('journal_mode = WAL');
+
 
 export default defineEventHandler(async event => {
-  const db = useDatabase();
 
   // // Add a new user
   // const id = String(Math.round(Math.random() * 10_000));
   // await db.sql`INSERT INTO relays (relay_id, grid_id, total) VALUES ('123', ${id}, '1')`;
 
   // Query for users
-  let {rows  } = await db.sql`
+  let {rows  } = await db.prepare(`
     SELECT * 
     FROM relays
     WHERE relay_id = '49ba4c' 
     AND timestamp < DATETIME(CURRENT_TIMESTAMP, '-1 minutes') 
     ORDER BY total, random()
     LIMIT 1 
-  `;
+  `).all();
   rows = rows || [];
   // console.log(rows);
 
@@ -4794,16 +4797,16 @@ export default defineEventHandler(async event => {
   if ( rows.length === 0 ){
     //random from locations list
     location = locations[Math.floor(Math.random() * locations.length)];
-    await db.sql`UPDATE relays SET timestamp = CURRENT_TIMESTAMP WHERE relay_id = '49ba4c' AND grid_id = ${location}`;
-    await db.sql`UPDATE relays SET total = total + 1 WHERE relay_id = '49ba4c' AND grid_id = ${location}`;
+    await db.prepare(`UPDATE relays SET timestamp = CURRENT_TIMESTAMP WHERE relay_id = '49ba4c' AND grid_id = ${location}`).run();
+    await db.prepare(`UPDATE relays SET total = total + 1 WHERE relay_id = '49ba4c' AND grid_id = ${location}`).run();
   } else {
     const row =rows[0];
     location = row.grid_id
 
     //update timestamp
-    await db.sql`UPDATE relays SET timestamp = CURRENT_TIMESTAMP WHERE id = ${row.id}`;
+    await db.prepare(`UPDATE relays SET timestamp = CURRENT_TIMESTAMP WHERE id = ${row.id}`).run();
     //update total
-    await db.sql`UPDATE relays SET total = total + 1 WHERE id = ${row.id}`;
+    await db.prepare(`UPDATE relays SET total = total + 1 WHERE id = ${row.id}`).run();
 
   }
   return location
